@@ -28,40 +28,62 @@ sample_string = "004300209005009001070060043006002087190007400"\
                 "050083000600000105003508690042910300"
 
 # 9block Mechanism
-master_9block = {"row":"", "col":"", "mtx":""}
+master_9block = {
+                 "row":{str(x):[] for x in range (1,10)}, 
+                 "col":{str(x):[] for x in range (1,10)}, 
+                 "mtx":{str(x):[] for x in range (1,10)}
+                 }
 
 # Cell Mechanism
 master = [{"val":"", "sol":[], "row_no":"", "col_no":"", "mtx_no":""} for x in 
           range(81)]
 for idx,cell in enumerate(master):
     cell["val"] = sample_string[idx]
+    
+    # row 9block 
     row_no = str((idx // 9) + 1)
     cell["row_no"] = row_no
-    # row 9block
-    master_9block["row"][row_no] = [cell]
-    cell["col_no"] = str((idx % 9) + 1)
-    # col 9block
+    master_9block["row"][row_no].append(cell)
+    
+    # col 9block    
+    col_no = str((idx % 9) + 1)
+    cell["col_no"] = col_no
+    master_9block["col"][col_no].append(cell)
+    
     if cell["row_no"] in ("1","2","3"):
         if cell["col_no"] in ("1","2","3"):
-            cell["mtx_no"] = "1"
+            mtx_no = "1"
         elif cell["col_no"] in ("4","5","6"):
-            cell["mtx_no"] = "2"
+            mtx_no = "2"
         elif cell["col_no"] in ("7","8","9"):
-            cell["mtx_no"] = "3"
+            mtx_no = "3"
     elif cell["row_no"] in ("4","5","6"):
         if cell["col_no"] in ("1","2","3"):
-            cell["mtx_no"] = "4"
+            mtx_no = "4"
         elif cell["col_no"] in ("4","5","6"):
-            cell["mtx_no"] = "5"
+            mtx_no = "5"
         elif cell["col_no"] in ("7","8","9"):
-            cell["mtx_no"] = "6"
+            mtx_no = "6"
     elif cell["row_no"] in ("7","8","9"):
         if cell["col_no"] in ("1","2","3"):
-            cell["mtx_no"] = "7"
+            mtx_no = "7"
         elif cell["col_no"] in ("4","5","6"):
-            cell["mtx_no"] = "8"
+            mtx_no = "8"
         elif cell["col_no"] in ("7","8","9"):
-            cell["mtx_no"] = "9"
+            mtx_no = "9"
+    cell["mtx_no"] = mtx_no
+    master_9block["mtx"][mtx_no].append(cell)
 
 # Playground
-# debug_matrix(True)
+debug_matrix(False)
+print()
+
+# 9block checker
+""" while True:
+    inp = input("What mtx do you want? >")
+    if inp == "done":break
+    if (int(inp)<1) or (int(inp)>9):continue
+    for thing in master_9block["mtx"][inp]:print(thing)
+    print()
+    debug_matrix(False)
+    print() """
