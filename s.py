@@ -33,20 +33,11 @@ sampleString = "004300209005009001070060043006002087190007400"\
 
 # 9block Mechanism
 rcmTuple = (("rows","rowNo"),(("cols","colNo")),(("mtxs","mtxNo")))
-master9block = {
-                 "rows":{str(x):{"cells":[],
+master9block = {rcmType:{str(x):{"cells":[],
                                  "sols":{str(y):[] for y in range (1,10)},
                                  "spaces":0}
-                         for x in range (1,10)}, 
-                 "cols":{str(x):{"cells":[],
-                                 "sols":{str(y):[] for y in range (1,10)},
-                                 "spaces":0}
-                         for x in range (1,10)},
-                 "mtxs":{str(x):{"cells":[],
-                                 "sols":{str(y):[] for y in range (1,10)},
-                                 "spaces":0}
-                         for x in range (1,10)},
-                 }
+                         for x in range (1,10)}
+                  for rcmType,rcmNo in rcmTuple}
 
 # Cell Mechanism
 master = [{"val":"", "sol":[], "rowNo":"", "colNo":"", "mtxNo":""}
@@ -189,3 +180,5 @@ for cell in master9block["mtxs"]["1"]["cells"]:
     solution_algorithm_1(cell)
 print_matrix(master)
 debug_mtx1() """
+
+print(master9block)
