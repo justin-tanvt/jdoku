@@ -85,19 +85,37 @@ for idx,cell in enumerate(master):
     master9block["col"][colNo]["cells"].append(cell)
     master9block["mtx"][mtxNo]["cells"].append(cell)
 
+# Solution-generator Mechanism
+debug_matrix(False)
+numberList = [str(x) for x in range(1,10)]
+for currentCell in master:
+    if currentCell["val"] != "0":continue
+    possibleSolutions = numberList.copy()
+    for otherCell in master9block["row"][currentCell["rowNo"]]["cells"]:
+        try:possibleSolutions.remove(otherCell["val"])
+        except:pass
+    for otherCell in master9block["col"][currentCell["colNo"]]["cells"]:
+        try:possibleSolutions.remove(otherCell["val"])
+        except:pass
+    for otherCell in master9block["mtx"][currentCell["mtxNo"]]["cells"]:
+        try:possibleSolutions.remove(otherCell["val"])
+        except:pass
+    """ print(f"Possible solutions for cell R,C:"
+          f"{currentCell['rowNo']},{currentCell['colNo']} "
+          f"of value {currentCell['val']} is {possibleSolutions}") """
+    currentCell["sol"] = possibleSolutions
+
 # Playground
-""" debug_matrix(False)
-print()
-while True:                                                     # 9block checker
-    inp9b = input("What 9block do you want? >")
-    if inp9b == "done":break
-    while True:
-        inpNo = input(f"Which {inp9b} do you want? >")
-        if inpNo == "back":break
-        if (int(inpNo)<1) or (int(inpNo)>9):continue
-        for thing in master9block[inp9b][inpNo]["cells"]:print(thing)
-        print()
-        debug_matrix(False)
-        print() """
-        
-print(master)
+# debug_matrix(False)
+# print()
+# while True:                                                     # 9block checker
+#     inp9b = input("What 9block do you want? >")
+#     if inp9b == "done":break
+#     while True:
+#         inpNo = input(f"Which {inp9b} do you want? >")
+#         if inpNo == "back":break
+#         if (int(inpNo)<1) or (int(inpNo)>9):continue
+#         for thing in master9block[inp9b][inpNo]["cells"]:print(thing)
+#         print()
+#         debug_matrix(False)
+#         print()
