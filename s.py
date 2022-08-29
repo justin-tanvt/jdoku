@@ -106,10 +106,7 @@ def overall_solve(quesString,ansString):
                 if len(b) < 1:continue
                 print(rcmType,currentRCM,a,[(elem["rowNo"],elem["colNo"])
                                             for elem in b]) """
-        
-    # Solution Algorithms
-    def update_solutions():
-        pass
+
     def solution_algorithm_1(cell):
         # implement solution
         if len(cell["sol"]) != 1:return
@@ -120,15 +117,16 @@ def overall_solve(quesString,ansString):
         print_matrix() """
         # update solutions in 9block cells
         cell["sol"] = []
-        # remove the same solution from other cells within RCM
         for rcmType,rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cell[rcmNo]]["cells"]:
                 try:otherCell["sol"].remove(currentSolution)
                 except:pass
-        # remove solution locations from similar solutions within RCM
+            master9block[rcmType][cell[rcmNo]]["sols"][currentSolution] = []
+            print(f"emptied out {rcmType}{cell[rcmNo]}'s ({currentSolution}) solution locations.")
+        
     # def solution_algorithm_2(solutions,sol):
     #     if len(solutions[sol]) != 1:return
-    #     solutions[sol]["val"] = currentSol
+    #     solutions[sol][0]["val"] = sol
     #     solutions[sol] = []
     #     # remove solution locations from similar solutions within RCM
     #     for rcmType,rcmNo in rcmTuple:
