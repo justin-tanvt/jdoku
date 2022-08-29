@@ -89,15 +89,10 @@ numberList = [str(x) for x in range(1,10)]
 for currentCell in master:
     if currentCell["val"] != "0":continue
     possibleSolutions = numberList.copy()
-    for otherCell in master9block["rows"][currentCell["rowNo"]]["cells"]:
-        try:possibleSolutions.remove(otherCell["val"])
-        except:pass
-    for otherCell in master9block["cols"][currentCell["colNo"]]["cells"]:
-        try:possibleSolutions.remove(otherCell["val"])
-        except:pass
-    for otherCell in master9block["mtxs"][currentCell["mtxNo"]]["cells"]:
-        try:possibleSolutions.remove(otherCell["val"])
-        except:pass
+    for rcmType,rcmNo in rcmTuple:
+        for otherCell in master9block[rcmType][currentCell[rcmNo]]["cells"]:
+            try:possibleSolutions.remove(otherCell["val"])
+            except:pass
     """ print(f"Possible solutions for cell R,C:"
           f"{currentCell['rowNo']},{currentCell['colNo']} "
           f"of value {currentCell['val']} is {possibleSolutions}") """
@@ -122,15 +117,10 @@ def solution_algorithm_1(cell):
           f"for value {currentSolution}\n")
     # update solutions in 9block cells
     cell["sol"] = []
-    for otherCell in master9block["rows"][cell["rowNo"]]["cells"]:
-        try:otherCell["sol"].remove(currentSolution)
-        except:pass
-    for otherCell in master9block["cols"][cell["colNo"]]["cells"]:
-        try:otherCell["sol"].remove(currentSolution)
-        except:pass
-    for otherCell in master9block["mtxs"][cell["mtxNo"]]["cells"]:
-        try:otherCell["sol"].remove(currentSolution)
-        except:pass
+    for rcmType,rcmNo in rcmTuple:
+        for otherCell in master9block[rcmType][cell[rcmNo]]["cells"]:
+            try:otherCell["sol"].remove(currentSolution)
+            except:pass
 def solution_algorithm_2():
     pass
 
@@ -168,7 +158,7 @@ while True:
         print() """
 
 # Playground - 3x3 mtx 1 onestep solver        
-""" print_matrix(master)
+print_matrix(master)
 def debug_mtx1():
     for cell in master9block["mtxs"]["1"]["cells"]:
         if cell["val"] != "0":continue
@@ -179,6 +169,4 @@ debug_mtx1()
 for cell in master9block["mtxs"]["1"]["cells"]:
     solution_algorithm_1(cell)
 print_matrix(master)
-debug_mtx1() """
-
-print(master9block)
+debug_mtx1()
