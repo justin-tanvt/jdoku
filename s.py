@@ -1,3 +1,6 @@
+# Sudoku Solver - work of Justin Tan Vern Tze
+# Design Doc - https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing
+
 # Functions
 def print_matrix(input_matrix):
     for x in range(9):
@@ -32,17 +35,17 @@ master_9block = {
                  "row":{
                         "cells" :{str(x):[] for x in range (1,10)},
                         "sols"  :{str(x):[] for x in range (1,10)},
-                        "spaces":0
+                        "spaces":{str(x):0 for x in range (1,10)}
                         }, 
                  "col":{
                         "cells" :{str(x):[] for x in range (1,10)},
                         "sols"  :{str(x):[] for x in range (1,10)},
-                        "spaces":0
+                        "spaces":{str(x):0 for x in range (1,10)}
                         },
                  "mtx":{
                         "cells" :{str(x):[] for x in range (1,10)},
                         "sols"  :{str(x):[] for x in range (1,10)},
-                        "spaces":0
+                        "spaces":{str(x):0 for x in range (1,10)}
                         },
                  }
 
