@@ -108,6 +108,8 @@ def overall_solve(quesString,ansString):
                                             for elem in b]) """
         
     # Solution Algorithms
+    def update_solutions():
+        pass
     def solution_algorithm_1(cell):
         # implement solution
         if len(cell["sol"]) != 1:return
@@ -118,12 +120,22 @@ def overall_solve(quesString,ansString):
         print_matrix() """
         # update solutions in 9block cells
         cell["sol"] = []
+        # remove the same solution from other cells within RCM
         for rcmType,rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cell[rcmNo]]["cells"]:
                 try:otherCell["sol"].remove(currentSolution)
                 except:pass
-    def solution_algorithm_2(sol):
-        pass
+        # remove solution locations from similar solutions within RCM
+    # def solution_algorithm_2(solutions,sol):
+    #     if len(solutions[sol]) != 1:return
+    #     solutions[sol]["val"] = currentSol
+    #     solutions[sol] = []
+    #     # remove solution locations from similar solutions within RCM
+    #     for rcmType,rcmNo in rcmTuple:
+    #         for otherCell in master9block[rcmType][cell[rcmNo]]["cells"]:
+    #             try:otherCell["sol"].remove(currentSolution)
+    #             except:pass
+        
 
     # Iteration Mechanism
     # while True:
@@ -134,8 +146,8 @@ def overall_solve(quesString,ansString):
                 solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
                 for currentCell in cellsInCurrentRCM:
                     solution_algorithm_1(currentCell)
-            # for currentSol in solsInCurrentRCM:
-                # solution_algorithm_2(currentSol)
+                # for currentSol in solsInCurrentRCM:
+                #     solution_algorithm_2(solsInCurrentRCM,currentSol)
         finalAnswer = ''.join([elem["val"] for elem in master])
         if finalAnswer == ansString:
             """ currentSolveCount += 1
@@ -162,9 +174,9 @@ while True:
         print() """
 
 # Development - Run Program
-sampleQuestion = "500104090006030002091070003070000060650001904930408500240605087800302005000040100"
-sampleAnswer = "523184796786539412491276853174953268658721934932468571249615387817392645365847129"
-overall_solve(sampleQuestion,sampleAnswer)
+sample1 = "500104090006030002091070003070000060650001904930408500240605087800302005000040100","523184796786539412491276853174953268658721934932468571249615387817392645365847129"
+sample2 = "068700900004000071030809050300080100040005007007304092602001005000020600059030028","568712943924653871731849256395287164246195387817364592682971435473528619159436728"
+overall_solve(sample1[0],sample1[1])
 
 # Proper - Run Program
 """ totalSudokuCount = 0
