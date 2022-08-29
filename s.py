@@ -29,27 +29,40 @@ sample_string = "004300209005009001070060043006002087190007400"\
 
 # 9block Mechanism
 master_9block = {
-                 "row":{str(x):[] for x in range (1,10)}, 
-                 "col":{str(x):[] for x in range (1,10)}, 
-                 "mtx":{str(x):[] for x in range (1,10)}
+                 "row":{
+                        "cells" :{str(x):[] for x in range (1,10)},
+                        "sols"  :{str(x):[] for x in range (1,10)},
+                        "spaces":0
+                        }, 
+                 "col":{
+                        "cells" :{str(x):[] for x in range (1,10)},
+                        "sols"  :{str(x):[] for x in range (1,10)},
+                        "spaces":0
+                        },
+                 "mtx":{
+                        "cells" :{str(x):[] for x in range (1,10)},
+                        "sols"  :{str(x):[] for x in range (1,10)},
+                        "spaces":0
+                        },
                  }
 
 # Cell Mechanism
 master = [{"val":"", "sol":[], "row_no":"", "col_no":"", "mtx_no":""} for x in 
           range(81)]
 for idx,cell in enumerate(master):
+    
+    # set individual cell value
     cell["val"] = sample_string[idx]
     
-    # row 9block 
+    # row
     row_no = str((idx // 9) + 1)
     cell["row_no"] = row_no
-    master_9block["row"][row_no].append(cell)
     
-    # col 9block    
+    # col    
     col_no = str((idx % 9) + 1)
     cell["col_no"] = col_no
-    master_9block["col"][col_no].append(cell)
     
+    # mtx
     if cell["row_no"] in ("1","2","3"):
         if cell["col_no"] in ("1","2","3"):
             mtx_no = "1"
@@ -72,14 +85,16 @@ for idx,cell in enumerate(master):
         elif cell["col_no"] in ("7","8","9"):
             mtx_no = "9"
     cell["mtx_no"] = mtx_no
-    master_9block["mtx"][mtx_no].append(cell)
+    
+    # 9block
+    master_9block["row"]["cells"][row_no].append(cell)
+    master_9block["col"]["cells"][col_no].append(cell)
+    master_9block["mtx"]["cells"][mtx_no].append(cell)
 
 # Playground
-debug_matrix(False)
-print()
-
-# 9block checker
-""" while True:
+# debug_matrix(False)
+# print()
+""" while True:                                                 # 9block checker
     inp = input("What mtx do you want? >")
     if inp == "done":break
     if (int(inp)<1) or (int(inp)>9):continue
@@ -87,3 +102,4 @@ print()
     print()
     debug_matrix(False)
     print() """
+    
