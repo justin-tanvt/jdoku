@@ -11,6 +11,7 @@ def print_matrix(inputMatrix):
         print(spacedString)
         if x < 8:
             print("-" * len(spacedString))
+    print()
         
 def master_index(row,column):
     indexWithinRow = column - 1
@@ -32,12 +33,15 @@ sampleString = "004300209005009001070060043006002087190007400"\
 
 # 9block Mechanism
 master9block = {
-                 "row":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
-                            range (1,10)}, 
-                 "col":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
-                            range (1,10)},
-                 "mtx":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
-                            range (1,10)},
+                 "rows":{str(x):{"cells":[],
+                                 "sols":{str(y):[] for y in range (1,10)},
+                                 "spaces":0} for x in range (1,10)}, 
+                 "cols":{str(x):{"cells":[],
+                                 "sols":{str(y):[] for y in range (1,10)},
+                                 "spaces":0} for x in range (1,10)},
+                 "mtxs":{str(x):{"cells":[],
+                                 "sols":{str(y):[] for y in range (1,10)},
+                                 "spaces":0} for x in range (1,10)},
                  }
 
 # Cell Mechanism
@@ -81,29 +85,66 @@ for idx,cell in enumerate(master):
     cell["mtxNo"] = mtxNo
     
     # add cell references to 9blocks
-    master9block["row"][rowNo]["cells"].append(cell)
-    master9block["col"][colNo]["cells"].append(cell)
-    master9block["mtx"][mtxNo]["cells"].append(cell)
+    master9block["rows"][rowNo]["cells"].append(cell)
+    master9block["cols"][colNo]["cells"].append(cell)
+    master9block["mtxs"][mtxNo]["cells"].append(cell)
 
 # Solution-generator Mechanism
-debug_matrix(False)
 numberList = [str(x) for x in range(1,10)]
+rcmTuple = (("rows","rowNo"),(),())
 for currentCell in master:
     if currentCell["val"] != "0":continue
     possibleSolutions = numberList.copy()
-    for otherCell in master9block["row"][currentCell["rowNo"]]["cells"]:
+    for otherCell in master9block["rows"][currentCell["rowNo"]]["cells"]:
         try:possibleSolutions.remove(otherCell["val"])
         except:pass
-    for otherCell in master9block["col"][currentCell["colNo"]]["cells"]:
+    for otherCell in master9block["cols"][currentCell["colNo"]]["cells"]:
         try:possibleSolutions.remove(otherCell["val"])
         except:pass
-    for otherCell in master9block["mtx"][currentCell["mtxNo"]]["cells"]:
+    for otherCell in master9block["mtxs"][currentCell["mtxNo"]]["cells"]:
         try:possibleSolutions.remove(otherCell["val"])
         except:pass
     """ print(f"Possible solutions for cell R,C:"
           f"{currentCell['rowNo']},{currentCell['colNo']} "
           f"of value {currentCell['val']} is {possibleSolutions}") """
     currentCell["sol"] = possibleSolutions
+    
+# Solution Algorithms
+def solution_algorithm_1(cell):
+    # implement solution
+    if len(cell["sol"]) != 1:return
+    currentSolution = cell["sol"][0]
+    cell["val"] = currentSolution
+    print(f"\nSolved cell R,C:{cell['rowNo']},{cell['colNo']} "
+          f"for value {currentSolution}\n")
+    # update solutions in 9block cells
+    cell["sol"] = []
+    for otherCell in master9block["rows"][cell["rowNo"]]["cells"]:
+        try:otherCell["sol"].remove(currentSolution)
+        except:pass
+    for otherCell in master9block["cols"][cell["colNo"]]["cells"]:
+        try:otherCell["sol"].remove(currentSolution)
+        except:pass
+    for otherCell in master9block["mtxs"][cell["mtxNo"]]["cells"]:
+        try:otherCell["sol"].remove(currentSolution)
+        except:pass
+def solution_algorithm_2():
+    pass
+
+# Iteration Mechanism
+# while True:
+# for currentRow in master9block["rows"]:
+#     for currentCell in master9block["rows"][currentRow]["cells"]:
+#         for potentSol in currentCell["sol"]:
+#             master9block["rows"][currentRow]["sols"][potentSol].append(cell)
+#         # solution algo 1
+#     # iterate through sols
+#         # solution algo 2
+#     pass
+# for eachCol in master9block["cols"]:
+#     pass
+# for eachMtx in master9block["mtxs"]:
+#     pass
 
 # Playground
 # debug_matrix(False)
@@ -119,3 +160,15 @@ for currentCell in master:
 #         print()
 #         debug_matrix(False)
 #         print()
+print_matrix(master)
+def debug_mtx1():
+    for cell in master9block["mtxs"]["1"]["cells"]:
+        if cell["val"] != "0":continue
+        print(f"Possible solutions for cell R,C:"
+            f"{cell['rowNo']},{cell['colNo']} "
+            f"of value {cell['val']} are {cell['sol']}")
+debug_mtx1()
+for cell in master9block["mtxs"]["1"]["cells"]:
+    solution_algorithm_1(cell)
+print_matrix(master)
+debug_mtx1()
