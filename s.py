@@ -184,7 +184,9 @@ for cell in master9block["mtxs"]["1"]["cells"]:
 print_matrix()
 debug_mtx1() """
 
-file = open('sudoku.csv')
+filename = "sudoku_small_3611.csv"
+
+file = open(filename)
 csvreader = csv.reader(file)
 
 totalSudokuCount = 0
@@ -193,7 +195,7 @@ currentSolveCount = 0
 for line in csvreader:
     totalSudokuCount += 1
     
-file = open('sudoku.csv')
+file = open(filename)
 csvreader = csv.reader(file)
 
 for line in csvreader:
