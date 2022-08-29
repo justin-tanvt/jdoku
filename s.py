@@ -108,7 +108,7 @@ for idx,cell in enumerate(master):
 # Playground
 debug_matrix(False)
 print()
-while True:                                                 # 9block checker
+while True:                                                     # 9block checker
     inp_9b = input("What 9block do you want? >")
     if inp_9b == "done":break
     while True:
