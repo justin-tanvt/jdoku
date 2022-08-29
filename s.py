@@ -31,7 +31,7 @@ sample_string = "004300209005009001070060043006002087190007400"\
                 "050083000600000105003508690042910300"
 
 # 9block Mechanism
-master_9block = {
+""" master_9block = {
                  "row":{
                         "cells" :{str(x):[] for x in range (1,10)},
                         "sols"  :{str(x):[] for x in range (1,10)},
@@ -46,6 +46,17 @@ master_9block = {
                         "cells" :{str(x):[] for x in range (1,10)},
                         "sols"  :{str(x):[] for x in range (1,10)},
                         "spaces":{str(x):0 for x in range (1,10)}
+                        },
+                 } """
+master_9block = {
+                 "row":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                            range (1,10)
+                        }, 
+                 "col":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                            range (1,10)
+                        },
+                 "mtx":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                            range (1,10)
                         },
                  }
 
@@ -90,19 +101,21 @@ for idx,cell in enumerate(master):
     cell["mtx_no"] = mtx_no
     
     # 9block
-    master_9block["row"]["cells"][row_no].append(cell)
-    master_9block["col"]["cells"][col_no].append(cell)
-    master_9block["mtx"]["cells"][mtx_no].append(cell)
+    master_9block["row"][row_no]["cells"].append(cell)
+    master_9block["col"][col_no]["cells"].append(cell)
+    master_9block["mtx"][mtx_no]["cells"].append(cell)
 
 # Playground
-# debug_matrix(False)
-# print()
-""" while True:                                                 # 9block checker
-    inp = input("What mtx do you want? >")
-    if inp == "done":break
-    if (int(inp)<1) or (int(inp)>9):continue
-    for thing in master_9block["mtx"][inp]:print(thing)
-    print()
-    debug_matrix(False)
-    print() """
-    
+debug_matrix(False)
+print()
+while True:                                                 # 9block checker
+    inp_9b = input("What 9block do you want? >")
+    if inp_9b == "done":break
+    while True:
+        inp_no = input(f"Which {inp_9b} do you want? >")
+        if inp_no == "back":break
+        if (int(inp_no)<1) or (int(inp_no)>9):continue
+        for thing in master_9block[inp_9b][inp_no]["cells"]:print(thing)
+        print()
+        debug_matrix(False)
+        print()
