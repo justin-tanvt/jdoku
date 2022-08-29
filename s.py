@@ -5,36 +5,16 @@
 import csv
 
 # Functions
-""" def print_matrix():
+def print_matrix(inputMatrix):
     for x in range(9):
         firstIndexInRow = 0 + (9 * x)
-        rowOf9Numbers = master[firstIndexInRow:firstIndexInRow+9]
+        rowOf9Numbers = inputMatrix[firstIndexInRow:firstIndexInRow+9]
         centredNumbers = [f'{y["val"]:^3}' for y in rowOf9Numbers]
         boxedCentredNumbers = "|".join(centredNumbers)
         print(boxedCentredNumbers)
         if x < 8:
             print("-" * len(boxedCentredNumbers))
     print()     
-
-def master_index(row,column):
-    indexWithinRow = column - 1
-    elemCountFromPreviousRows = 9 * (row - 1)
-    finalIndex = elemCountFromPreviousRows + indexWithinRow
-    return finalIndex
-
-def debug_matrix(option):
-    print_matrix()
-    if option:
-        for x in range(9):
-            firstIndexInRow = x * 9
-            for y in master[firstIndexInRow:firstIndexInRow+9]:print(y)
-            print() """
-
-# Example String
-""" currentQuestion = "004300209005009001070060043006002087190007400"\
-                "050083000600000105003508690042910300"
-currentAnswer = "86437125932584976197126584343619258719865743225"\
-                "7483916689734125713528694542916378" """
 
 def overall_solve(quesString,ansString):
 
@@ -94,6 +74,8 @@ def overall_solve(quesString,ansString):
         master9block["cols"][colNo]["cells"].append(cell)
         master9block["mtxs"][mtxNo]["cells"].append(cell)
 
+    print_matrix(master)
+    
     # Solution-generator Mechanism
     numberList = [str(x) for x in range(1,10)]
     for currentCell in master:
@@ -108,14 +90,22 @@ def overall_solve(quesString,ansString):
             f"of value {currentCell['val']} is {possibleSolutions}") """
         currentCell["sol"] = possibleSolutions
         
-    """ Populate 9block Solutions
-    for currentRow in master9block["rows"]:
-        cellsInCurrentRow = master9block["rows"][currentRow]["cells"]
-        solsInCurrentRow = master9block["rows"][currentRow]["sols"]
-        for currentCell in cellsInCurrentRow:
-            for potentSol in currentCell["sol"]:
-                if cell in solsInCurrentRow[potentSol]:continue
-                solsInCurrentRow[potentSol].append(cell) """
+    # Populate 9block Solutions
+    for rcmType,rcmNo in rcmTuple:
+        for currentRCM in master9block[rcmType]:
+            cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
+            solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
+            for currentCell in cellsInCurrentRCM:
+                for potentSol in currentCell["sol"]:
+                    solsInCurrentRCM[potentSol].append(currentCell)
+    # 9block Solutions Debugger
+    """ for rcmType,rcmNo in rcmTuple:
+        for currentRCM in master9block[rcmType]:
+            solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
+            for a,b in solsInCurrentRCM.items():
+                if len(b) < 1:continue
+                print(rcmType,currentRCM,a,[(elem["rowNo"],elem["colNo"])
+                                            for elem in b]) """
         
     # Solution Algorithms
     def solution_algorithm_1(cell):
@@ -132,7 +122,7 @@ def overall_solve(quesString,ansString):
             for otherCell in master9block[rcmType][cell[rcmNo]]["cells"]:
                 try:otherCell["sol"].remove(currentSolution)
                 except:pass
-    def solution_algorithm_2():
+    def solution_algorithm_2(sol):
         pass
 
     # Iteration Mechanism
@@ -148,9 +138,10 @@ def overall_solve(quesString,ansString):
                 # solution_algorithm_2(currentSol)
         finalAnswer = ''.join([elem["val"] for elem in master])
         if finalAnswer == ansString:
-            currentSolveCount += 1
+            """ currentSolveCount += 1
             print(f"Sudoku #{currentSolveCount} of {totalSudokuCount} "\
-                "has been solved.")
+                "has been solved.") """
+            print("Sudoku solved...")
             break
         else:continue
 
@@ -170,34 +161,21 @@ while True:
         debug_matrix(False)
         print() """
 
-# Playground - 3x3 mtx 1 onestep solver        
-""" print_matrix()
-def debug_mtx1():
-    for cell in master9block["mtxs"]["1"]["cells"]:
-        if cell["val"] != "0":continue
-        print(f"Possible solutions for cell R,C:"
-            f"{cell['rowNo']},{cell['colNo']} "
-            f"of value {cell['val']} are {cell['sol']}")
-debug_mtx1()
-for cell in master9block["mtxs"]["1"]["cells"]:
-    solution_algorithm_1(cell)
-print_matrix()
-debug_mtx1() """
+# Development - Run Program
+sampleQuestion = "500104090006030002091070003070000060650001904930408500240605087800302005000040100"
+sampleAnswer = "523184796786539412491276853174953268658721934932468571249615387817392645365847129"
+overall_solve(sampleQuestion,sampleAnswer)
 
+# Proper - Run Program
+""" totalSudokuCount = 0
+currentSolveCount = 0
 filename = "sudoku_small_3611.csv"
-
 file = open(filename)
 csvreader = csv.reader(file)
-
-totalSudokuCount = 0
-currentSolveCount = 0
-
 for line in csvreader:
     totalSudokuCount += 1
-    
 file = open(filename)
 csvreader = csv.reader(file)
-
 for line in csvreader:
     question,answer = line
-    overall_solve(question,answer)
+    overall_solve(question,answer) """
