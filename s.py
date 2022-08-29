@@ -2,10 +2,10 @@
 # Design Doc - https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing
 
 # Functions
-def print_matrix(inputMatrix):
+def print_matrix():
     for x in range(9):
         firstIndexInRow = 0 + (9 * x)
-        rowOf9Numbers = inputMatrix[firstIndexInRow:firstIndexInRow+9]
+        rowOf9Numbers = master[firstIndexInRow:firstIndexInRow+9]
         centredNumbers = [f'{y["val"]:^3}' for y in rowOf9Numbers]
         boxedCentredNumbers = "|".join(centredNumbers)
         print(boxedCentredNumbers)
@@ -13,6 +13,17 @@ def print_matrix(inputMatrix):
             print("-" * len(boxedCentredNumbers))
     print()
         
+def print_answer():
+    for x in range(9):
+        firstIndexInRow = 0 + (9 * x)
+        rowOf9Numbers = sampleAnswer[firstIndexInRow:firstIndexInRow+9]
+        centredNumbers = [f'{y:^3}' for y in rowOf9Numbers]
+        boxedCentredNumbers = "|".join(centredNumbers)
+        print(boxedCentredNumbers)
+        if x < 8:
+            print("-" * len(boxedCentredNumbers))
+    print()        
+
 def master_index(row,column):
     indexWithinRow = column - 1
     elemCountFromPreviousRows = 9 * (row - 1)
@@ -20,7 +31,7 @@ def master_index(row,column):
     return finalIndex
 
 def debug_matrix(option):
-    print_matrix(master)
+    print_matrix()
     if option:
         for x in range(9):
             firstIndexInRow = x * 9
@@ -28,8 +39,10 @@ def debug_matrix(option):
             print()
 
 # Example String
-sampleString = "004300209005009001070060043006002087190007400"\
+sampleQuestion = "004300209005009001070060043006002087190007400"\
                 "050083000600000105003508690042910300"
+sampleAnswer = "86437125932584976197126584343619258719865743225"\
+                "7483916689734125713528694542916378"
 
 # 9block Mechanism
 rcmTuple = (("rows","rowNo"),(("cols","colNo")),(("mtxs","mtxNo")))
@@ -45,7 +58,7 @@ master = [{"val":"", "sol":[], "rowNo":"", "colNo":"", "mtxNo":""}
 for idx,cell in enumerate(master):
     
     # set individual cell value
-    cell["val"] = sampleString[idx]
+    cell["val"] = sampleQuestion[idx]
     
     # row
     rowNo = str((idx // 9) + 1)
@@ -113,8 +126,9 @@ def solution_algorithm_1(cell):
     if len(cell["sol"]) != 1:return
     currentSolution = cell["sol"][0]
     cell["val"] = currentSolution
-    print(f"\nSolved cell R,C:{cell['rowNo']},{cell['colNo']} "
-          f"for value {currentSolution}\n")
+    print(f"Solution found: (R,C={cell['rowNo']},{cell['colNo']}) "
+          f"for value ({currentSolution})\n")
+    print_matrix()
     # update solutions in 9block cells
     cell["sol"] = []
     for rcmType,rcmNo in rcmTuple:
@@ -126,21 +140,15 @@ def solution_algorithm_2():
 
 # Iteration Mechanism
 # while True:
-# for currentRow in master9block["rows"]:
-#     cellsInCurrentRow = master9block["rows"][currentRow]["cells"]
-#     solsInCurrentRow = master9block["rows"][currentRow]["sols"]
-#     for currentCell in cellsInCurrentRow:
-#         for potentSol in currentCell["sol"]:
-#             if cell in solsInCurrentRow[potentSol]:continue
-#             solsInCurrentRow[potentSol].append(cell)
-#         solution_algorithm_1(currentCell)
-#     iterate through sols
-#         solution algo 2
-#     pass
-# for eachCol in master9block["cols"]:
-#     pass
-# for eachMtx in master9block["mtxs"]:
-#     pass
+print_matrix()
+for rcmType,rcmNo in rcmTuple:
+    for currentRCM in master9block[rcmType]:
+        cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
+        solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
+        for currentCell in cellsInCurrentRCM:
+            solution_algorithm_1(currentCell)
+        # for currentSol in solsInCurrentRCM:
+            # solution_algorithm_2(currentSol)
 
 # Playground - 9block printer
 """ debug_matrix(False)
@@ -158,7 +166,7 @@ while True:
         print() """
 
 # Playground - 3x3 mtx 1 onestep solver        
-print_matrix(master)
+""" print_matrix()
 def debug_mtx1():
     for cell in master9block["mtxs"]["1"]["cells"]:
         if cell["val"] != "0":continue
@@ -168,5 +176,5 @@ def debug_mtx1():
 debug_mtx1()
 for cell in master9block["mtxs"]["1"]["cells"]:
     solution_algorithm_1(cell)
-print_matrix(master)
-debug_mtx1()
+print_matrix()
+debug_mtx1() """
