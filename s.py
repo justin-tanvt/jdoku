@@ -32,11 +32,11 @@ sampleString = "004300209005009001070060043006002087190007400"\
 
 # 9block Mechanism
 master9block = {
-                 "row":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                 "row":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
                             range (1,10)}, 
-                 "col":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                 "col":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
                             range (1,10)},
-                 "mtx":{str(x):{"cells":[],"rows":[],"spaces":0} for x in \
+                 "mtx":{str(x):{"cells":[],"sols":[],"spaces":0} for x in \
                             range (1,10)},
                  }
 
@@ -86,7 +86,7 @@ for idx,cell in enumerate(master):
     master9block["mtx"][mtxNo]["cells"].append(cell)
 
 # Playground
-debug_matrix(False)
+""" debug_matrix(False)
 print()
 while True:                                                     # 9block checker
     inp9b = input("What 9block do you want? >")
@@ -98,4 +98,6 @@ while True:                                                     # 9block checker
         for thing in master9block[inp9b][inpNo]["cells"]:print(thing)
         print()
         debug_matrix(False)
-        print()
+        print() """
+        
+print(master)
