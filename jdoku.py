@@ -6,84 +6,88 @@ import csv
 from time import perf_counter
 import timeit
 
-t0_start = timeit.default_timer()
+programStartTime = timeit.default_timer()
 
 # Constants
-numberList = [str(x) for x in range(1,10)]
+numberList = [str(x) for x in range(1, 10)]
 
 # Functions
 def print_matrix(inputMatrix):
+    """ Prints formatted 9x9 matrix of given (list of dicts) or (string)."""
     for x in range(9):
         firstIndexInRow = 0 + (9 * x)
-        rowOf9Numbers = inputMatrix[firstIndexInRow:firstIndexInRow+9]
-        if isinstance(inputMatrix,list):
+        rowOf9Numbers = inputMatrix[firstIndexInRow:(firstIndexInRow + 9)]
+        if isinstance(inputMatrix, list):
             centredNumbers = [f'{y["val"]:^3}' for y in rowOf9Numbers]
-        elif isinstance(inputMatrix,str):
+        elif isinstance(inputMatrix, str):
             centredNumbers = [f'{y:^3}' for y in rowOf9Numbers]
         boxedCentredNumbers = "|".join(centredNumbers)
         print(boxedCentredNumbers)
-        if x < 8:
+        if x < 8:   # Don't print after row 9
             print("-" * len(boxedCentredNumbers))
-    print()     
+    print()
 
-def master_index(row,column):
+def master_index(row, column):
     indexWithinRow = column - 1
     elemCountFromPreviousRows = 9 * (row - 1)
     finalIndex = elemCountFromPreviousRows + indexWithinRow
     return finalIndex
 
-def overall_solve(quesString,ansString):
-    
-    t1_start = perf_counter()
-    
+def overall_solve(quesString, ansString):
     global solveCount
     global failCount
     global totalComputeTimeMseconds
     global failCases
     
-    # 9block Mechanism
-    rcmTuple = (("rows","rowNo"),(("cols","colNo")),(("mtxs","mtxNo")))
-    master9block = {rcmType:{str(x):{"cells":[],
-                                    "sols":{str(y):[] for y in range (1,10)},
-                                    "spaces":0}
-                            for x in range (1,10)}
-                    for rcmType,rcmNo in rcmTuple}
+    solveStartTime = perf_counter()
     
+    # 9block Mechanism
+    rcmTuple = (("rows", "rowNo"),(("cols", "colNo")),(("mtxs", "mtxNo")))
+    master9block = {
+        rcmType:{
+            str(x):{"cells":[],
+                    "sols":{str(y):[] for y in range (1,10)}}
+            for x in range (1,10)}
+        for rcmType,rcmNo in rcmTuple}
+
     # Cell Mechanism
-    master = [{"val":"", "sol":[], "rowNo":"", "colNo":"", "mtxNo":""}
-            for x in range(81)]
-    for idx,masterCell in enumerate(master):
-        masterCell["val"] = quesString[idx]          # set individual cell value
-        rowNo = str((idx // 9) + 1)                                        # row
-        masterCell["rowNo"] = rowNo   
-        colNo = str((idx % 9) + 1)                                         # col 
+    master = [
+        {"val": "", "sol": [], "rowNo": "", "colNo": "", "mtxNo": ""}
+        for x in range(81)
+        ]
+    for idx, masterCell in enumerate(master):
+        masterCell["val"] = quesString[idx]
+        rowNo = str((idx // 9) + 1)
+        masterCell["rowNo"] = rowNo
+        colNo = str((idx % 9) + 1)
         masterCell["colNo"] = colNo
-        if masterCell["rowNo"] in ("1","2","3"):                           # mtx
-            if masterCell["colNo"] in ("1","2","3"):
+        if masterCell["rowNo"] in ("1", "2", "3"):
+            if masterCell["colNo"] in ("1", "2", "3"):
                 mtxNo = "1"
-            elif masterCell["colNo"] in ("4","5","6"):
+            elif masterCell["colNo"] in ("4", "5", "6"):
                 mtxNo = "2"
-            elif masterCell["colNo"] in ("7","8","9"):
+            elif masterCell["colNo"] in ("7", "8", "9"):
                 mtxNo = "3"
-        elif masterCell["rowNo"] in ("4","5","6"):
-            if masterCell["colNo"] in ("1","2","3"):
+        elif masterCell["rowNo"] in ("4", "5", "6"):
+            if masterCell["colNo"] in ("1", "2", "3"):
                 mtxNo = "4"
-            elif masterCell["colNo"] in ("4","5","6"):
+            elif masterCell["colNo"] in ("4", "5", "6"):
                 mtxNo = "5"
-            elif masterCell["colNo"] in ("7","8","9"):
+            elif masterCell["colNo"] in ("7", "8", "9"):
                 mtxNo = "6"
-        elif masterCell["rowNo"] in ("7","8","9"):
-            if masterCell["colNo"] in ("1","2","3"):
+        elif masterCell["rowNo"] in ("7", "8", "9"):
+            if masterCell["colNo"] in ("1", "2", "3"):
                 mtxNo = "7"
-            elif masterCell["colNo"] in ("4","5","6"):
+            elif masterCell["colNo"] in ("4", "5", "6"):
                 mtxNo = "8"
-            elif masterCell["colNo"] in ("7","8","9"):
+            elif masterCell["colNo"] in ("7", "8", "9"):
                 mtxNo = "9"
         masterCell["mtxNo"] = mtxNo
-        master9block["rows"][rowNo]["cells"].append(masterCell)        # 9blocks
+
+        master9block["rows"][rowNo]["cells"].append(masterCell)
         master9block["cols"][colNo]["cells"].append(masterCell)
         master9block["mtxs"][mtxNo]["cells"].append(masterCell)
-    
+
     # Solution-generator Mechanism
     for currentCell in master:
         if currentCell["val"] != "0":continue
@@ -156,7 +160,7 @@ def overall_solve(quesString,ansString):
         
         if finalAnswer == ansString:
             t1_stop = perf_counter()
-            elapsedTimeSeconds = t1_stop - t1_start
+            elapsedTimeSeconds = t1_stop - solveStartTime
             elapsedTimeMseconds = 1000 * elapsedTimeSeconds
             totalComputeTimeMseconds += elapsedTimeMseconds
             solveCount += 1
@@ -167,7 +171,7 @@ def overall_solve(quesString,ansString):
                   f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
                   f"Average Time:{averageComputeTimeMS:>6.3f}ms ")
             break
-        elif (1000*(perf_counter() - t1_start)) > 500:
+        elif (1000*(perf_counter() - solveStartTime)) > 500:
             failCount += 1
             print(f"#{currentSudokuNo:>7n} | "\
                   f"Solved:{solveCount:>7n} "\
@@ -191,8 +195,8 @@ for lineIndex,line in enumerate(csvreader):
     question,answer = line
     overall_solve(question,answer)
 
-t0_end = timeit.default_timer()
-totalTimeSeconds = t0_end - t0_start
+programEndTime = timeit.default_timer()
+totalTimeSeconds = programEndTime - programStartTime
 totalTimeMins = totalTimeSeconds / 60
 
 totalComputeTimeMinutes = totalComputeTimeMseconds / 1000 / 60
