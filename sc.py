@@ -3,7 +3,11 @@
 
 # Imports
 import csv
+import enum
 from time import perf_counter
+from time import time
+
+t0_start = time.time()
 
 # Constants
 numberList = [str(x) for x in range(1,10)]
@@ -30,8 +34,13 @@ def master_index(row,column):
     return finalIndex
 
 def overall_solve(quesString,ansString):
-    global totalSudokuCount
-    global currentSolveCount
+    
+    t1_start = perf_counter()
+    
+    global solveCount
+    global failCount
+    global totalComputeTimeMseconds
+    global failCases
     
     # 9block Mechanism
     rcmTuple = (("rows","rowNo"),(("cols","colNo")),(("mtxs","mtxNo")))
@@ -142,30 +151,64 @@ def overall_solve(quesString,ansString):
             for currentRCM in master9block[rcmType]:
                 solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
                 for currentSol in solsInCurrentRCM:
-                    solution_algorithm_2(currentSol,solsInCurrentRCM)
+                    solution_algorithm_2(currentSol,solsInCurrentRCM)    
+                    
         finalAnswer = ''.join([elem["val"] for elem in master])
+        
         if finalAnswer == ansString:
-            currentSolveCount += 1
-            print(f"Sudoku #{currentSolveCount} of {totalSudokuCount} "\
-                "has been solved.")
+            t1_stop = perf_counter()
+            elapsedTimeSeconds = t1_stop - t1_start
+            elapsedTimeMseconds = 1000 * elapsedTimeSeconds
+            totalComputeTimeMseconds += elapsedTimeMseconds
+            solveCount += 1
+            averageComputeTimeMS = totalComputeTimeMseconds / solveCount  
+            print(f"#{currentSudokuNo:>7n} | "\
+                  f"Solved:{solveCount:>7n} "\
+                  f"Failed:{failCount:>2n} | "\
+                  f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
+                  f"Average Time:{averageComputeTimeMS:>6.3f}ms ")
+            break
+        elif (1000*(perf_counter() - t1_start)) > 500:
+            failCount += 1
+            print(f"#{currentSudokuNo:>7n} | "\
+                  f"Solved:{solveCount:>7n} "\
+                  f"Failed:{failCount:>2n} ")
+            failCases.append(currentSudokuNo)
             break
         else:continue
 
 # Proper - Run Program
-totalSudokuCount = 0
-currentSolveCount = 0
+solveCount = 0
+failCount = 0
+totalComputeTimeMseconds = 0
+failCases = []
+
 filename = "sudoku_full.csv"
+
 file = open(filename)
 csvreader = csv.reader(file)
-for line in csvreader:
-    totalSudokuCount += 1
-file = open(filename)
-csvreader = csv.reader(file)
-for line in csvreader:
+for lineIndex,line in enumerate(csvreader):
+    currentSudokuNo = lineIndex + 1
     question,answer = line
-    t1_start = perf_counter()
     overall_solve(question,answer)
-    t1_stop = perf_counter()
-    elapsedTime = t1_stop - t1_start
-    elapsedTimeMS = 1000 * elapsedTime
-    print(f"Elapsed time in miliseconds: {elapsedTimeMS:n}ms")
+
+t0_end = time.time()
+totalTimeSeconds = t0_end - t0_start
+totalTimeMins = totalTimeSeconds / 60
+
+totalComputeTimeMinutes = totalComputeTimeMseconds / 1000 / 60
+
+print("\n\n")
+print(f"| Summary |")
+print(f"Solved:{solveCount:>7n}")
+print(f"Failed:{failCount:>2n}")
+print()
+print(f"Average ComputeTime:{totalComputeTimeMseconds/solveCount:>6.3f}ms")
+print(f"Total Compute Time:{totalComputeTimeMinutes:>4.2f}minutes")
+print(f"Total Time:{totalTimeMins:>4.2f}minutes")
+print()
+print(f"Success Rate:{100*solveCount/1000000:>5.2f}%")
+
+print()
+print(f"These are the following failed cases:\n{failCases}")
+print("\n\n")
