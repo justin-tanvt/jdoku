@@ -26,10 +26,9 @@ def master_index(row,column):
     return finalIndex
 
 def overall_solve(quesString,ansString):
-
     global totalSudokuCount
     global currentSolveCount
-
+    
     # 9block Mechanism
     rcmTuple = (("rows","rowNo"),(("cols","colNo")),(("mtxs","mtxNo")))
     master9block = {rcmType:{str(x):{"cells":[],
@@ -37,25 +36,17 @@ def overall_solve(quesString,ansString):
                                     "spaces":0}
                             for x in range (1,10)}
                     for rcmType,rcmNo in rcmTuple}
-
+    
     # Cell Mechanism
     master = [{"val":"", "sol":[], "rowNo":"", "colNo":"", "mtxNo":""}
             for x in range(81)]
     for idx,masterCell in enumerate(master):
-        
-        # set individual cell value
-        masterCell["val"] = quesString[idx]
-        
-        # row
-        rowNo = str((idx // 9) + 1)
-        masterCell["rowNo"] = rowNo
-        
-        # col    
-        colNo = str((idx % 9) + 1)
+        masterCell["val"] = quesString[idx]          # set individual cell value
+        rowNo = str((idx // 9) + 1)                                        # row
+        masterCell["rowNo"] = rowNo   
+        colNo = str((idx % 9) + 1)                                         # col 
         masterCell["colNo"] = colNo
-        
-        # mtx
-        if masterCell["rowNo"] in ("1","2","3"):
+        if masterCell["rowNo"] in ("1","2","3"):                           # mtx
             if masterCell["colNo"] in ("1","2","3"):
                 mtxNo = "1"
             elif masterCell["colNo"] in ("4","5","6"):
@@ -77,9 +68,7 @@ def overall_solve(quesString,ansString):
             elif masterCell["colNo"] in ("7","8","9"):
                 mtxNo = "9"
         masterCell["mtxNo"] = mtxNo
-        
-        # add cell references to 9blocks
-        master9block["rows"][rowNo]["cells"].append(masterCell)
+        master9block["rows"][rowNo]["cells"].append(masterCell)        # 9blocks
         master9block["cols"][colNo]["cells"].append(masterCell)
         master9block["mtxs"][mtxNo]["cells"].append(masterCell)
     
@@ -92,9 +81,6 @@ def overall_solve(quesString,ansString):
             for otherCell in master9block[rcmType][currentCell[rcmNo]]["cells"]:
                 try:possibleSolutions.remove(otherCell["val"])
                 except:pass
-        """ print(f"Possible solutions for cell R,C:"
-            f"{currentCell['rowNo']},{currentCell['colNo']} "
-            f"of value {currentCell['val']} is {possibleSolutions}") """
         currentCell["sol"] = possibleSolutions
         
     # Populate 9block Solutions
@@ -105,14 +91,6 @@ def overall_solve(quesString,ansString):
             for currentCell in cellsInCurrentRCM:
                 for potentSol in currentCell["sol"]:
                     solsInCurrentRCM[potentSol].append(currentCell)
-    # 9block Solutions Debugger
-    """ for rcmType,rcmNo in rcmTuple:
-        for currentRCM in master9block[rcmType]:
-            solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
-            for a,b in solsInCurrentRCM.items():
-                if len(b) < 1:continue
-                print(rcmType,currentRCM,a,[(elem["rowNo"],elem["colNo"])
-                                            for elem in b]) """
 
     def check_answer(answerCell,solutionToCheckFor,printBool=False):
         correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']),int(answerCell['colNo']))]
@@ -126,14 +104,10 @@ def overall_solve(quesString,ansString):
             quit()
 
     def solution_algorithm_1(cellSA1):
-        # implement solution
         if len(cellSA1["sol"]) != 1:return
         currentSolution = cellSA1["sol"][0]
         cellSA1["val"] = currentSolution
-        # print(f"Solution found with algo1: (R,C={cellSA1['rowNo']},{cellSA1['colNo']}) "
-        #     f"for value ({currentSolution})")
         check_answer(cellSA1,currentSolution)
-        # update solutions in 9block cells
         cellSA1["sol"] = []
         for rcmType,rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cellSA1[rcmNo]]["cells"]:
@@ -146,8 +120,6 @@ def overall_solve(quesString,ansString):
         cellSA2 = solutionsSA2[solSA2][0]
         cellSA2["val"] = solSA2
         cellSA2["sol"] = []
-        # print(f"Solution found with algo2: (R,C={cellSA2['rowNo']},{cellSA2['colNo']}) "
-        #     f"for value ({solSA2})")
         check_answer(cellSA2,solSA2)
         solutionsSA2[solSA2] = []
         for rcmType,rcmNo in rcmTuple:
@@ -155,7 +127,6 @@ def overall_solve(quesString,ansString):
                 try:otherCell["sol"].remove(solSA2)
                 except:pass
             master9block[rcmType][cellSA2[rcmNo]]["sols"][solSA2] = []
-        
 
     # Iteration Mechanism
     while True:
@@ -174,33 +145,8 @@ def overall_solve(quesString,ansString):
             currentSolveCount += 1
             print(f"Sudoku #{currentSolveCount} of {totalSudokuCount} "\
                 "has been solved.")
-            # print("Sudoku solved...")
             break
         else:continue
-
-
-# Playground - 9block printer
-""" debug_matrix(False)
-print()
-while True:
-    inp9b = input("What 9block do you want? >")
-    if inp9b == "done":break
-    while True:
-        inpNo = input(f"Which {inp9b} do you want? >")
-        if inpNo == "back":break
-        if (int(inpNo)<1) or (int(inpNo)>9):continue
-        for thing in master9block[inp9b][inpNo]["cells"]:print(thing)
-        print()
-        debug_matrix(False)
-        print() """
-
-# Development - Run Program
-# sample1 = "500104090006030002091070003070000060650001904930408500240605087800302005000040100","523184796786539412491276853174953268658721934932468571249615387817392645365847129"
-# sample2 = "068700900004000071030809050300080100040005007007304092602001005000020600059030028","568712943924653871731849256395287164246195387817364592682971435473528619159436728"
-# overall_solve(sample2[0],sample2[1])
-
-# Print Answer
-# print_matrix(sample2[1])
 
 # Proper - Run Program
 totalSudokuCount = 0
