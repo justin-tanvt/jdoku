@@ -19,6 +19,12 @@ def print_matrix(inputMatrix):
             print("-" * len(boxedCentredNumbers))
     print()     
 
+def master_index(row,column):
+    indexWithinRow = column - 1
+    elemCountFromPreviousRows = 9 * (row - 1)
+    finalIndex = elemCountFromPreviousRows + indexWithinRow
+    return finalIndex
+
 def overall_solve(quesString,ansString):
 
     global totalSudokuCount
@@ -108,6 +114,10 @@ def overall_solve(quesString,ansString):
                 print(rcmType,currentRCM,a,[(elem["rowNo"],elem["colNo"])
                                             for elem in b]) """
 
+    def check_answer(answerCell,solutionToCheckFor):
+        correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']),int(answerCell['colNo']))]
+        if solutionToCheckFor == correctAnswerToCheckAgainst: print("This is indeed the correct solution.")
+
     def solution_algorithm_1(cellSA1):
         # implement solution
         if len(cellSA1["sol"]) != 1:return
@@ -115,7 +125,7 @@ def overall_solve(quesString,ansString):
         cellSA1["val"] = currentSolution
         print(f"Solution found: (R,C={cellSA1['rowNo']},{cellSA1['colNo']}) "
             f"for value ({currentSolution})")
-        print_matrix(master)
+        check_answer(cellSA1,currentSolution)
         # update solutions in 9block cells
         cellSA1["sol"] = []
         for rcmType,rcmNo in rcmTuple:
