@@ -116,7 +116,10 @@ def overall_solve(quesString,ansString):
 
     def check_answer(answerCell,solutionToCheckFor):
         correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']),int(answerCell['colNo']))]
-        if solutionToCheckFor == correctAnswerToCheckAgainst: print("This is indeed the correct solution.")
+        if solutionToCheckFor == correctAnswerToCheckAgainst: print("This is indeed the correct solution\n")
+        else:
+            print("There has been an incorrect solution. Quitting program now...")
+            quit()
 
     def solution_algorithm_1(cellSA1):
         # implement solution
@@ -135,33 +138,33 @@ def overall_solve(quesString,ansString):
             master9block[rcmType][cellSA1[rcmNo]]["sols"][currentSolution] = []
             # print(f"emptied out {rcmType}{cellSA1[rcmNo]}'s ({currentSolution}) solution locations.")
         
-    # def solution_algorithm_2(solSA2,solutionsSA2):
-    #     if len(solutionsSA2[solSA2]) != 1:return
-    #     cellSA2 = solutionsSA2[solSA2][0]
-    #     cellSA2["val"] = solSA2
-    #     print(f"Solution found: (R,C={cellSA2['rowNo']},{cellSA2['colNo']}) "
-    #         f"for value ({solSA2})\n")
-    #     print_matrix(master)
-    #     solutionsSA2[solSA2] = []
-    #     for rcmType,rcmNo in rcmTuple:
-    #         for otherCell in master9block[rcmType][cellSA2[rcmNo]]["cells"]:
-    #             try:otherCell["sol"].remove(solSA2)
-    #             except:pass
-    #         master9block[rcmType][cellSA2[rcmNo]]["sols"][solSA2] = []
+    def solution_algorithm_2(solSA2,solutionsSA2):
+        if len(solutionsSA2[solSA2]) != 1:return
+        cellSA2 = solutionsSA2[solSA2][0]
+        cellSA2["val"] = solSA2
+        print(f"Solution found: (R,C={cellSA2['rowNo']},{cellSA2['colNo']}) "
+            f"for value ({solSA2})")
+        check_answer(cellSA2,solSA2)
+        solutionsSA2[solSA2] = []
+        for rcmType,rcmNo in rcmTuple:
+            for otherCell in master9block[rcmType][cellSA2[rcmNo]]["cells"]:
+                try:otherCell["sol"].remove(solSA2)
+                except:pass
+            master9block[rcmType][cellSA2[rcmNo]]["sols"][solSA2] = []
         
 
     # Iteration Mechanism
     while True:
-        for rcmType,rcmNo in rcmTuple:
-            for currentRCM in master9block[rcmType]:
-                cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
-                for currentCell in cellsInCurrentRCM:
-                    solution_algorithm_1(currentCell)
         # for rcmType,rcmNo in rcmTuple:
         #     for currentRCM in master9block[rcmType]:
-        #         solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
-        #         for currentSol in solsInCurrentRCM:
-        #             solution_algorithm_2(currentSol,solsInCurrentRCM)
+        #         cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
+        #         for currentCell in cellsInCurrentRCM:
+        #             solution_algorithm_1(currentCell)
+        for rcmType,rcmNo in rcmTuple:
+            for currentRCM in master9block[rcmType]:
+                solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
+                for currentSol in solsInCurrentRCM:
+                    solution_algorithm_2(currentSol,solsInCurrentRCM)
         finalAnswer = ''.join([elem["val"] for elem in master])
         if finalAnswer == ansString:
             # currentSolveCount += 1
@@ -190,7 +193,7 @@ while True:
 # Development - Run Program
 sample1 = "500104090006030002091070003070000060650001904930408500240605087800302005000040100","523184796786539412491276853174953268658721934932468571249615387817392645365847129"
 sample2 = "068700900004000071030809050300080100040005007007304092602001005000020600059030028","568712943924653871731849256395287164246195387817364592682971435473528619159436728"
-overall_solve(sample1[0],sample1[1])
+overall_solve(sample2[0],sample2[1])
 
 # Print Answer
 # print_matrix(sample2[1])
