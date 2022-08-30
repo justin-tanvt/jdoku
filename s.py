@@ -114,11 +114,15 @@ def overall_solve(quesString,ansString):
                 print(rcmType,currentRCM,a,[(elem["rowNo"],elem["colNo"])
                                             for elem in b]) """
 
-    def check_answer(answerCell,solutionToCheckFor):
+    def check_answer(answerCell,solutionToCheckFor,printBool=False):
         correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']),int(answerCell['colNo']))]
-        if solutionToCheckFor == correctAnswerToCheckAgainst: print("This is indeed the correct solution\n")
+        if solutionToCheckFor == correctAnswerToCheckAgainst:
+            if printBool:print("This is indeed the correct solution")
         else:
-            print("There has been an incorrect solution. Quitting program now...")
+            print("There has been an incorrect solution")
+            print(f"{rcmType}{answerCell[rcmNo]}")
+            print(f"correct answer:{correctAnswerToCheckAgainst} | computed answer:{solutionToCheckFor}")
+            print("Quitting program now...")
             quit()
 
     def solution_algorithm_1(cellSA1):
@@ -126,8 +130,8 @@ def overall_solve(quesString,ansString):
         if len(cellSA1["sol"]) != 1:return
         currentSolution = cellSA1["sol"][0]
         cellSA1["val"] = currentSolution
-        print(f"Solution found: (R,C={cellSA1['rowNo']},{cellSA1['colNo']}) "
-            f"for value ({currentSolution})")
+        # print(f"Solution found with algo1: (R,C={cellSA1['rowNo']},{cellSA1['colNo']}) "
+        #     f"for value ({currentSolution})")
         check_answer(cellSA1,currentSolution)
         # update solutions in 9block cells
         cellSA1["sol"] = []
@@ -136,14 +140,14 @@ def overall_solve(quesString,ansString):
                 try:otherCell["sol"].remove(currentSolution)
                 except:pass
             master9block[rcmType][cellSA1[rcmNo]]["sols"][currentSolution] = []
-            # print(f"emptied out {rcmType}{cellSA1[rcmNo]}'s ({currentSolution}) solution locations.")
         
     def solution_algorithm_2(solSA2,solutionsSA2):
         if len(solutionsSA2[solSA2]) != 1:return
         cellSA2 = solutionsSA2[solSA2][0]
         cellSA2["val"] = solSA2
-        print(f"Solution found: (R,C={cellSA2['rowNo']},{cellSA2['colNo']}) "
-            f"for value ({solSA2})")
+        cellSA2["sol"] = []
+        # print(f"Solution found with algo2: (R,C={cellSA2['rowNo']},{cellSA2['colNo']}) "
+        #     f"for value ({solSA2})")
         check_answer(cellSA2,solSA2)
         solutionsSA2[solSA2] = []
         for rcmType,rcmNo in rcmTuple:
@@ -155,11 +159,11 @@ def overall_solve(quesString,ansString):
 
     # Iteration Mechanism
     while True:
-        # for rcmType,rcmNo in rcmTuple:
-        #     for currentRCM in master9block[rcmType]:
-        #         cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
-        #         for currentCell in cellsInCurrentRCM:
-        #             solution_algorithm_1(currentCell)
+        for rcmType,rcmNo in rcmTuple:
+            for currentRCM in master9block[rcmType]:
+                cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
+                for currentCell in cellsInCurrentRCM:
+                    solution_algorithm_1(currentCell)
         for rcmType,rcmNo in rcmTuple:
             for currentRCM in master9block[rcmType]:
                 solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
