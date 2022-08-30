@@ -3,11 +3,10 @@
 
 # Imports
 import csv
-import enum
 from time import perf_counter
-from time import time
+import timeit
 
-t0_start = time.time()
+t0_start = timeit.default_timer()
 
 # Constants
 numberList = [str(x) for x in range(1,10)]
@@ -192,7 +191,7 @@ for lineIndex,line in enumerate(csvreader):
     question,answer = line
     overall_solve(question,answer)
 
-t0_end = time.time()
+t0_end = timeit.default_timer()
 totalTimeSeconds = t0_end - t0_start
 totalTimeMins = totalTimeSeconds / 60
 
