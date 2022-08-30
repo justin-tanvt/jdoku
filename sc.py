@@ -3,6 +3,10 @@
 
 # Imports
 import csv
+from time import perf_counter
+
+# Constants
+numberList = [str(x) for x in range(1,10)]
 
 # Functions
 def print_matrix(inputMatrix):
@@ -73,7 +77,6 @@ def overall_solve(quesString,ansString):
         master9block["mtxs"][mtxNo]["cells"].append(masterCell)
     
     # Solution-generator Mechanism
-    numberList = [str(x) for x in range(1,10)]
     for currentCell in master:
         if currentCell["val"] != "0":continue
         possibleSolutions = numberList.copy()
@@ -160,4 +163,9 @@ file = open(filename)
 csvreader = csv.reader(file)
 for line in csvreader:
     question,answer = line
+    t1_start = perf_counter()
     overall_solve(question,answer)
+    t1_stop = perf_counter()
+    elapsedTime = t1_stop - t1_start
+    elapsedTimeMS = 1000 * elapsedTime
+    print(f"Elapsed time in miliseconds: {elapsedTimeMS:n}ms")
