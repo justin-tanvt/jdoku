@@ -10,6 +10,7 @@ programStartTime = timeit.default_timer()
 
 # Constants
 numberList = [str(x) for x in range(1, 10)]
+failureThresholdSeconds = 0.5
 
 # Functions
 def print_matrix(inputMatrix):
@@ -98,7 +99,7 @@ def overall_solve(quesString, ansString):
                 except:pass
         currentCell["sol"] = possibleSolutions
         
-    # Populate 9block Solutions
+    # Populate 9block Possible-Solution-Locations
     for rcmType,rcmNo in rcmTuple:
         for currentRCM in master9block[rcmType]:
             cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
@@ -107,8 +108,8 @@ def overall_solve(quesString, ansString):
                 for potentSol in currentCell["sol"]:
                     solsInCurrentRCM[potentSol].append(currentCell)
 
-    def check_answer(answerCell,solutionToCheckFor,printBool=False):
-        correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']),int(answerCell['colNo']))]
+    def check_answer(answerCell, solutionToCheckFor, printBool=False):
+        correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']), int(answerCell['colNo']))]
         if solutionToCheckFor == correctAnswerToCheckAgainst:
             if printBool:print("This is indeed the correct solution")
         else:
@@ -122,7 +123,7 @@ def overall_solve(quesString, ansString):
         if len(cellSA1["sol"]) != 1:return
         currentSolution = cellSA1["sol"][0]
         cellSA1["val"] = currentSolution
-        check_answer(cellSA1,currentSolution)
+        check_answer(cellSA1, currentSolution)
         cellSA1["sol"] = []
         for rcmType,rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cellSA1[rcmNo]]["cells"]:
@@ -130,12 +131,12 @@ def overall_solve(quesString, ansString):
                 except:pass
             master9block[rcmType][cellSA1[rcmNo]]["sols"][currentSolution] = []
         
-    def solution_algorithm_2(solSA2,solutionsSA2):
+    def solution_algorithm_2(solSA2, solutionsSA2):
         if len(solutionsSA2[solSA2]) != 1:return
         cellSA2 = solutionsSA2[solSA2][0]
         cellSA2["val"] = solSA2
         cellSA2["sol"] = []
-        check_answer(cellSA2,solSA2)
+        check_answer(cellSA2, solSA2)
         solutionsSA2[solSA2] = []
         for rcmType,rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cellSA2[rcmNo]]["cells"]:
@@ -159,8 +160,8 @@ def overall_solve(quesString, ansString):
         finalAnswer = ''.join([elem["val"] for elem in master])
         
         if finalAnswer == ansString:
-            t1_stop = perf_counter()
-            elapsedTimeSeconds = t1_stop - solveStartTime
+            solveEndTime = perf_counter()
+            elapsedTimeSeconds = solveEndTime - solveStartTime
             elapsedTimeMseconds = 1000 * elapsedTimeSeconds
             totalComputeTimeMseconds += elapsedTimeMseconds
             solveCount += 1
@@ -171,7 +172,7 @@ def overall_solve(quesString, ansString):
                   f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
                   f"Average Time:{averageComputeTimeMS:>6.3f}ms ")
             break
-        elif (1000*(perf_counter() - solveStartTime)) > 500:
+        elif (perf_counter() - solveStartTime) > failureThresholdSeconds:
             failCount += 1
             print(f"#{currentSudokuNo:>7n} | "\
                   f"Solved:{solveCount:>7n} "\
