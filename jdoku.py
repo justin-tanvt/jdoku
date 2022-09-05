@@ -1,16 +1,21 @@
 # Sudoku Solver - work of Justin Tan Vern Tze
 # Design Doc - https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing
 
+
 # Imports
 import csv
 from time import perf_counter
 import timeit
 
-programStartTime = timeit.default_timer()
+
+# Load CSV of sudokus [default = "sudoku_full.csv"]
+filename = "sudoku_full.csv"
+
 
 # Constants
 numberList = [str(x) for x in range(1, 10)]
 failureThresholdSeconds = 0.5
+
 
 # Functions
 def print_matrix(inputMatrix):
@@ -181,28 +186,29 @@ def overall_solve(quesString, ansString):
             break
         else:continue
 
-# Proper - Run Program
+
+# Run Program
+programStartTime = timeit.default_timer()
+
 solveCount = 0
 failCount = 0
 totalComputeTimeMseconds = 0
 failCases = []
 
-filename = "sudoku_full.csv"
-
 file = open(filename)
 csvreader = csv.reader(file)
 for lineIndex,line in enumerate(csvreader):
     currentSudokuNo = lineIndex + 1
-    question,answer = line
-    overall_solve(question,answer)
+    (question, answer) = line
+    overall_solve(question, answer)
 
 programEndTime = timeit.default_timer()
 totalTimeSeconds = programEndTime - programStartTime
 totalTimeMins = totalTimeSeconds / 60
-
 totalComputeTimeMinutes = totalComputeTimeMseconds / 1000 / 60
 
-print("\n\n")
+# Print Results
+print()
 print(f"| Summary |")
 print(f"Solved:{solveCount:<7n}")
 print(f"Failed:{failCount:<2n}")
@@ -212,7 +218,5 @@ print(f"Total Compute Time: {totalComputeTimeMinutes:<4.2f}minutes")
 print(f"Total Time: {totalTimeMins:<4.2f}minutes")
 print()
 print(f"Success Rate: {100*solveCount/1000000:<.5f}%")
-
 print()
 print(f"These are the following failed cases:\n{failCases}")
-print("\n\n")
