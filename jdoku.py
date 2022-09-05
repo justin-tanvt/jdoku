@@ -8,8 +8,8 @@ from time import perf_counter
 import timeit
 
 
-# Load CSV of sudokus [default = "sudoku_full.csv"]
-filename = "sudoku_full.csv"
+# Load CSV of sudokus [default = "sudoku_data.csv"]
+filename = "sudoku_data.csv"
 
 
 # Constants
