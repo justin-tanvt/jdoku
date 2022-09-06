@@ -1,15 +1,15 @@
-# 👋 Introducing `Jdoku`
+## 👋 Introducing `Jdoku`
 `Jdoku` solves easy sudokus at an average rate of 650 puzzles/second using [hidden single](https://sudoku.com/sudoku-rules/hidden-singles/) & [naked single](https://sudoku.com/sudoku-rules/obvious-singles/) techniques.
 
-# 📝 Project Requirements ([Design Doc](https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing))
+## 📝 Project Requirements ([Design Doc](https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing))
 - solve easy-medium puzzles
 - no guessing required (all logical steps)
 - time performance is negligible as long as it takes all the correct steps
 
-# 🚀 Performance
+## 🚀 Performance
 </p>
 <p align="left">
-<img src="https://github.com/justin-tanvt/jdoku/blob/main/final_result.png" alt="name"/>
+<img src="https://github.com/justin-tanvt/jdoku/blob/main/final_result.png" alt="final_results" width="500"/>
 </p>
 
 > result obtained from running solver against 1 million sudokus from [Kaggle](https://www.kaggle.com/datasets/bryanpark/sudoku)
@@ -20,5 +20,5 @@ PC specs:
 - System type	64-bit operating system, x64-based processor
 
 
-# 🛡️ License
+## 🛡️ License
 This project is licensed under the MIT License - see the [`LICENSE`](LICENSE) file for details.
