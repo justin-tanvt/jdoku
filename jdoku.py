@@ -9,7 +9,7 @@ import timeit
 
 
 # Load CSV of sudokus [default = "sudoku_data.csv"]
-filename = "sudoku_data.csv"
+filename = "sudoku_full.csv"
 
 
 # Constants
@@ -213,10 +213,10 @@ print(f"| Summary |")
 print(f"Solved:{solveCount:<7n}")
 print(f"Failed:{failCount:<2n}")
 print()
-print(f"Average Compute Time: {totalComputeTimeMseconds/solveCount:<6.3f}ms")
-print(f"Total Compute Time: {totalComputeTimeMinutes:<4.2f}minutes")
-print(f"Total Time: {totalTimeMins:<4.2f}minutes")
+print(f"Average Compute Time: {totalComputeTimeMseconds/solveCount:<.3f}ms")
+print(f"Total Compute Time: {totalComputeTimeMinutes:<.2f} minutes")
+print(f"Total Time: {totalTimeMins:<.2f} minutes")
 print()
-print(f"Success Rate: {100*solveCount/1000000:<.5f}%")
+print(f"Solve Rate: {100*solveCount/1000000:<.4f}%")
 print()
 print(f"These are the following failed cases:\n{failCases}")
