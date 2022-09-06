@@ -13,8 +13,8 @@ filename = "sudoku_data.csv"
 
 
 # Constants
-numberList = [str(x) for x in range(1, 10)]
-failureThresholdSeconds = 0.5
+NUMBER_LIST = [str(x) for x in range(1, 10)]
+FAILURE_THRESHOLD_SECONDS = 0.5
 
 
 # Functions
@@ -134,7 +134,7 @@ def overall_solve(quesString, ansString):
     for currentCell in master:
         if currentCell["val"] != "0": continue
         # Remove other numbers found in each of its 3 9blocks
-        possibleSolutions = numberList.copy()
+        possibleSolutions = NUMBER_LIST.copy()
         for rcmType, rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][currentCell[rcmNo]]["cells"]:
                 try: possibleSolutions.remove(otherCell["val"])
@@ -155,13 +155,21 @@ def overall_solve(quesString, ansString):
 
     # Answer-checking Mechanism
     def check_answer(answerCell, solutionToCheckFor, printBool=False):
-        correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']), int(answerCell['colNo']))]
-        if solutionToCheckFor == correctAnswerToCheckAgainst:
+        correctAnswer = ansString[
+            master_index(
+                int(answerCell['rowNo']),
+                int(answerCell['colNo'])
+            )
+        ]
+        if solutionToCheckFor == correctAnswer:
             if printBool:print("This is indeed the correct solution")
         else:
             print("There has been an incorrect solution")
             print(f"{rcmType}{answerCell[rcmNo]}")
-            print(f"correct answer:{correctAnswerToCheckAgainst} | computed answer:{solutionToCheckFor}")
+            print(
+                f"correct answer:{correctAnswer} | "\
+                f"computed answer:{solutionToCheckFor}"
+            )
             print("Quitting program now...")
             quit()
 
@@ -208,7 +216,7 @@ def overall_solve(quesString, ansString):
                 for currentSol in solsIn9block:
                     solution_algorithm_2(currentSol,solsIn9block)    
                     
-        finalAnswer = ''.join([elem["val"] for elem in master])
+        finalAnswer = ''.join([cell["val"] for cell in master])
         
         if finalAnswer == ansString:
             solveEndTime = perf_counter()
@@ -217,18 +225,22 @@ def overall_solve(quesString, ansString):
             totalComputeTimeMseconds += elapsedTimeMseconds
             solveCount += 1
             averageComputeTimeMS = totalComputeTimeMseconds / solveCount  
-            print(f"#{currentSudokuNo:>7n} | "\
-                  f"Solved:{solveCount:>7n} "\
-                  f"Failed:{failCount:>2n} | "\
-                  f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
-                  f"Average Time:{averageComputeTimeMS:>6.3f}ms ")
+            print(
+                f"#{currentSudokuNo:>7n} | "\
+                f"Solved:{solveCount:>7n} "\
+                f"Failed:{failCount:>2n} | "\
+                f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
+                f"Average Time:{averageComputeTimeMS:>6.3f}ms "
+            )
             break
         # Timeout Mechanism
-        elif (perf_counter() - solveStartTime) > failureThresholdSeconds:
+        elif (perf_counter() - solveStartTime) > FAILURE_THRESHOLD_SECONDS:
             failCount += 1
-            print(f"#{currentSudokuNo:>7n} | "\
-                  f"Solved:{solveCount:>7n} "\
-                  f"Failed:{failCount:>2n} ")
+            print(
+                f"#{currentSudokuNo:>7n} | "\
+                f"Solved:{solveCount:>7n} "\
+                f"Failed:{failCount:>2n} "
+            )
             failCases.append(currentSudokuNo)
             break
         # Run through both algorithms again if still unsolved
