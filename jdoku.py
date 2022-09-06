@@ -64,7 +64,7 @@ def overall_solve(quesString, ansString):
     # 9block Mechanism
     ## Represent each 9block as a dictionary in a master dictionary
     master9block = {
-        # There are 3 types of 9blocks - rows/cols/mtxs
+        # There are 3 types of 9blocks - rows/cols/mtxs(a.k.a. box)
         rcmType:{
             # Each type of 9block has 9 unique units - ie. 9 rows, 9 columns...
             str(x):{
@@ -97,6 +97,7 @@ def overall_solve(quesString, ansString):
     for idxInMaster, cellInMaster in enumerate(master):
         # Fill in cell values from given question
         cellInMaster["val"] = quesString[idxInMaster]
+        # Each cell belongs to a row, column & matrix
         # Assign row, column and matrix numbers
         rowNo = str((idxInMaster // 9) + 1)
         cellInMaster["rowNo"] = rowNo
@@ -124,7 +125,7 @@ def overall_solve(quesString, ansString):
             elif cellInMaster["colNo"] in ("7", "8", "9"):
                 mtxNo = "9"
         cellInMaster["mtxNo"] = mtxNo
-        # Append each cell into its corresponding 9block
+        # Append the cell into each of its 3 9blocks
         master9block["rows"][rowNo]["cells"].append(cellInMaster)
         master9block["cols"][colNo]["cells"].append(cellInMaster)
         master9block["mtxs"][mtxNo]["cells"].append(cellInMaster)
