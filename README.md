@@ -9,7 +9,7 @@
 # 🚀 Performance
 </p>
 <p align="left">
-<img src="https://github.com/justin-tanvt/jdoku/blob/main/final_result.JPG" alt="name"/>
+<img src="https://github.com/justin-tanvt/jdoku/blob/main/final_result.png" alt="name"/>
 </p>
 
 > result obtained from running solver against 1 million sudokus from [Kaggle](https://www.kaggle.com/datasets/bryanpark/sudoku)
