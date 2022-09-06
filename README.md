@@ -1,5 +1,5 @@
 # 👋 Introducing `Jdoku`
-`Jdoku` solves easy sudokus at an average rate of 650 puzzles/second using hidden single & naked single techniques.
+`Jdoku` solves easy sudokus at an average rate of 650 puzzles/second using [hidden single](https://sudoku.com/sudoku-rules/hidden-singles/) & [naked single](https://sudoku.com/sudoku-rules/obvious-singles/) techniques.
 
 # 📝 Project Requirements ([Design Doc](https://docs.google.com/document/d/1KCCfjfKg8iyMkaLdQSvfWO71qLnZUjACPIxyBmeREjo/edit?usp=sharing))
 - solve easy-medium puzzles
