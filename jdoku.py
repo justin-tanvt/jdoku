@@ -97,7 +97,7 @@ def overall_solve(quesString, ansString):
     for idxInMaster, cellInMaster in enumerate(master):
         # Fill in cell values from given question
         cellInMaster["val"] = quesString[idxInMaster]
-        # Each cell belongs to a row, column & matrix
+        # Each cell belongs to a row, column & matrix 9block
         # Assign row, column and matrix numbers
         rowNo = str((idxInMaster // 9) + 1)
         cellInMaster["rowNo"] = rowNo
@@ -133,7 +133,7 @@ def overall_solve(quesString, ansString):
     # Solution-generator Mechanism
     for currentCell in master:
         if currentCell["val"] != "0": continue
-        # Remove numbers found in its 3 associated RCMs for each cell
+        # Remove other numbers found in each of its 3 9blocks
         possibleSolutions = numberList.copy()
         for rcmType, rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][currentCell[rcmNo]]["cells"]:
@@ -231,7 +231,7 @@ def overall_solve(quesString, ansString):
                   f"Failed:{failCount:>2n} ")
             failCases.append(currentSudokuNo)
             break
-        # Run through both algorithms if still unsolved
+        # Run through both algorithms again if still unsolved
         else:continue
 
 
