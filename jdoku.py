@@ -9,7 +9,7 @@ import timeit
 
 
 # Load CSV of sudokus [default = "sudoku_data.csv"]
-filename = "sudoku_full.csv"
+filename = "sudoku_data.csv"
 
 
 # Constants
@@ -19,14 +19,20 @@ failureThresholdSeconds = 0.5
 
 # Functions
 def print_matrix(inputMatrix):
-    """ Prints formatted 9x9 matrix of given (list of dicts) or (string)."""
+    """ Prints formatted 9x9 matrix from given (list of dicts) or (string)."""
     for x in range(9):
         firstIndexInRow = 0 + (9 * x)
         rowOf9Numbers = inputMatrix[firstIndexInRow:(firstIndexInRow + 9)]
         if isinstance(inputMatrix, list):
-            centredNumbers = [f'{y["val"]:^3}' for y in rowOf9Numbers]
+            centredNumbers = [
+                f'{y["val"]:^3}' 
+                for y in rowOf9Numbers
+            ]
         elif isinstance(inputMatrix, str):
-            centredNumbers = [f'{y:^3}' for y in rowOf9Numbers]
+            centredNumbers = [
+                f'{y:^3}' 
+                for y in rowOf9Numbers
+            ]
         boxedCentredNumbers = "|".join(centredNumbers)
         print(boxedCentredNumbers)
         if x < 8:   # Don't print after row 9
@@ -34,6 +40,7 @@ def print_matrix(inputMatrix):
     print()
 
 def master_index(row, column):
+    """Returns index between 0-81 from given (row,column) integer inputs."""
     indexWithinRow = column - 1
     elemCountFromPreviousRows = 9 * (row - 1)
     finalIndex = elemCountFromPreviousRows + indexWithinRow
@@ -47,72 +54,105 @@ def overall_solve(quesString, ansString):
     
     solveStartTime = perf_counter()
     
+    # Used to iterate through rows/cols/mtxs in 9block master data structure
+    rcmTuple = (
+        ("rows", "rowNo"),
+        ("cols", "colNo"),
+        ("mtxs", "mtxNo")
+    )
+    
     # 9block Mechanism
-    rcmTuple = (("rows", "rowNo"),(("cols", "colNo")),(("mtxs", "mtxNo")))
+    ## Represent each 9block as a dictionary in a master dictionary
     master9block = {
+        # There are 3 types of 9blocks - rows/cols/mtxs
         rcmType:{
-            str(x):{"cells":[],
-                    "sols":{str(y):[] for y in range (1,10)}}
-            for x in range (1,10)}
-        for rcmType,rcmNo in rcmTuple}
+            # Each type of 9block has 9 unique units - ie. 9 rows, 9 columns...
+            str(x):{
+                # Each 9block contains 9 cells to be contained in a list
+                "cells":[],
+                # Each 9block must contain the solutions 1-9
+                "sols":{
+                    # Potential solution locations to be contained in a list
+                    str(y):[] 
+                    for y in range (1,10)
+                }
+            }
+            for x in range (1,10)
+        }
+        for rcmType, rcmNo in rcmTuple
+    }
 
     # Cell Mechanism
+    ## Represent each cell as a dictionary in a master list
     master = [
-        {"val": "", "sol": [], "rowNo": "", "colNo": "", "mtxNo": ""}
+        {
+            "val": "",
+            "sol": [],
+            "rowNo": "",
+            "colNo": "",
+            "mtxNo": ""
+        }
         for x in range(81)
-        ]
-    for idx, masterCell in enumerate(master):
-        masterCell["val"] = quesString[idx]
-        rowNo = str((idx // 9) + 1)
-        masterCell["rowNo"] = rowNo
-        colNo = str((idx % 9) + 1)
-        masterCell["colNo"] = colNo
-        if masterCell["rowNo"] in ("1", "2", "3"):
-            if masterCell["colNo"] in ("1", "2", "3"):
+    ]
+    for idxInMaster, cellInMaster in enumerate(master):
+        # Fill in cell values from given question
+        cellInMaster["val"] = quesString[idxInMaster]
+        # Assign row, column and matrix numbers
+        rowNo = str((idxInMaster // 9) + 1)
+        cellInMaster["rowNo"] = rowNo
+        colNo = str((idxInMaster % 9) + 1)
+        cellInMaster["colNo"] = colNo
+        if cellInMaster["rowNo"] in ("1", "2", "3"):
+            if cellInMaster["colNo"] in ("1", "2", "3"):
                 mtxNo = "1"
-            elif masterCell["colNo"] in ("4", "5", "6"):
+            elif cellInMaster["colNo"] in ("4", "5", "6"):
                 mtxNo = "2"
-            elif masterCell["colNo"] in ("7", "8", "9"):
+            elif cellInMaster["colNo"] in ("7", "8", "9"):
                 mtxNo = "3"
-        elif masterCell["rowNo"] in ("4", "5", "6"):
-            if masterCell["colNo"] in ("1", "2", "3"):
+        elif cellInMaster["rowNo"] in ("4", "5", "6"):
+            if cellInMaster["colNo"] in ("1", "2", "3"):
                 mtxNo = "4"
-            elif masterCell["colNo"] in ("4", "5", "6"):
+            elif cellInMaster["colNo"] in ("4", "5", "6"):
                 mtxNo = "5"
-            elif masterCell["colNo"] in ("7", "8", "9"):
+            elif cellInMaster["colNo"] in ("7", "8", "9"):
                 mtxNo = "6"
-        elif masterCell["rowNo"] in ("7", "8", "9"):
-            if masterCell["colNo"] in ("1", "2", "3"):
+        elif cellInMaster["rowNo"] in ("7", "8", "9"):
+            if cellInMaster["colNo"] in ("1", "2", "3"):
                 mtxNo = "7"
-            elif masterCell["colNo"] in ("4", "5", "6"):
+            elif cellInMaster["colNo"] in ("4", "5", "6"):
                 mtxNo = "8"
-            elif masterCell["colNo"] in ("7", "8", "9"):
+            elif cellInMaster["colNo"] in ("7", "8", "9"):
                 mtxNo = "9"
-        masterCell["mtxNo"] = mtxNo
-
-        master9block["rows"][rowNo]["cells"].append(masterCell)
-        master9block["cols"][colNo]["cells"].append(masterCell)
-        master9block["mtxs"][mtxNo]["cells"].append(masterCell)
+        cellInMaster["mtxNo"] = mtxNo
+        # Append each cell into its corresponding 9block
+        master9block["rows"][rowNo]["cells"].append(cellInMaster)
+        master9block["cols"][colNo]["cells"].append(cellInMaster)
+        master9block["mtxs"][mtxNo]["cells"].append(cellInMaster)
 
     # Solution-generator Mechanism
     for currentCell in master:
-        if currentCell["val"] != "0":continue
+        if currentCell["val"] != "0": continue
+        # Remove numbers found in its 3 associated RCMs for each cell
         possibleSolutions = numberList.copy()
-        for rcmType,rcmNo in rcmTuple:
+        for rcmType, rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][currentCell[rcmNo]]["cells"]:
-                try:possibleSolutions.remove(otherCell["val"])
-                except:pass
+                try: possibleSolutions.remove(otherCell["val"])
+                except: pass
+        # Numbers remaining are the cell's possible solutions
         currentCell["sol"] = possibleSolutions
         
     # Populate 9block Possible-Solution-Locations
-    for rcmType,rcmNo in rcmTuple:
-        for currentRCM in master9block[rcmType]:
-            cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
-            solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
-            for currentCell in cellsInCurrentRCM:
+    for rcmType, rcmNo in rcmTuple:
+        for current9block in master9block[rcmType]:
+            cellsIn9block = master9block[rcmType][current9block]["cells"]
+            solsIn9block = master9block[rcmType][current9block]["sols"]
+            for currentCell in cellsIn9block:
+                # Iterate through each cell's potential solutions
                 for potentSol in currentCell["sol"]:
-                    solsInCurrentRCM[potentSol].append(currentCell)
+                    # Append that cell in that 9block's solution's locations
+                    solsIn9block[potentSol].append(currentCell)
 
+    # Answer-checking Mechanism
     def check_answer(answerCell, solutionToCheckFor, printBool=False):
         correctAnswerToCheckAgainst = ansString[master_index(int(answerCell['rowNo']), int(answerCell['colNo']))]
         if solutionToCheckFor == correctAnswerToCheckAgainst:
@@ -124,43 +164,48 @@ def overall_solve(quesString, ansString):
             print("Quitting program now...")
             quit()
 
+    # Naked Single Algorithm
+    ## Solve if that cell has only 1 potential solution
     def solution_algorithm_1(cellSA1):
-        if len(cellSA1["sol"]) != 1:return
+        if len(cellSA1["sol"]) != 1: return
         currentSolution = cellSA1["sol"][0]
         cellSA1["val"] = currentSolution
         check_answer(cellSA1, currentSolution)
         cellSA1["sol"] = []
-        for rcmType,rcmNo in rcmTuple:
+        for rcmType, rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cellSA1[rcmNo]]["cells"]:
-                try:otherCell["sol"].remove(currentSolution)
-                except:pass
+                try: otherCell["sol"].remove(currentSolution)
+                except: pass
             master9block[rcmType][cellSA1[rcmNo]]["sols"][currentSolution] = []
         
+    # Hidden Single Algorithm
+    ## Solve if that solution has only 1 potential location
     def solution_algorithm_2(solSA2, solutionsSA2):
-        if len(solutionsSA2[solSA2]) != 1:return
+        if len(solutionsSA2[solSA2]) != 1: return
         cellSA2 = solutionsSA2[solSA2][0]
-        cellSA2["val"] = solSA2
+        currentSolution = solSA2
+        cellSA2["val"] = currentSolution
         cellSA2["sol"] = []
         check_answer(cellSA2, solSA2)
         solutionsSA2[solSA2] = []
-        for rcmType,rcmNo in rcmTuple:
+        for rcmType, rcmNo in rcmTuple:
             for otherCell in master9block[rcmType][cellSA2[rcmNo]]["cells"]:
-                try:otherCell["sol"].remove(solSA2)
-                except:pass
+                try: otherCell["sol"].remove(solSA2)
+                except: pass
             master9block[rcmType][cellSA2[rcmNo]]["sols"][solSA2] = []
 
     # Iteration Mechanism
     while True:
-        for rcmType,rcmNo in rcmTuple:
-            for currentRCM in master9block[rcmType]:
-                cellsInCurrentRCM = master9block[rcmType][currentRCM]["cells"]
-                for currentCell in cellsInCurrentRCM:
+        for rcmType, rcmNo in rcmTuple:
+            for current9block in master9block[rcmType]:
+                cellsIn9block = master9block[rcmType][current9block]["cells"]
+                for currentCell in cellsIn9block:
                     solution_algorithm_1(currentCell)
-        for rcmType,rcmNo in rcmTuple:
-            for currentRCM in master9block[rcmType]:
-                solsInCurrentRCM = master9block[rcmType][currentRCM]["sols"]
-                for currentSol in solsInCurrentRCM:
-                    solution_algorithm_2(currentSol,solsInCurrentRCM)    
+        for rcmType, rcmNo in rcmTuple:
+            for current9block in master9block[rcmType]:
+                solsIn9block = master9block[rcmType][current9block]["sols"]
+                for currentSol in solsIn9block:
+                    solution_algorithm_2(currentSol,solsIn9block)    
                     
         finalAnswer = ''.join([elem["val"] for elem in master])
         
@@ -177,6 +222,7 @@ def overall_solve(quesString, ansString):
                   f"Current Time:{elapsedTimeMseconds:>6.3f}ms | "\
                   f"Average Time:{averageComputeTimeMS:>6.3f}ms ")
             break
+        # Timeout Mechanism
         elif (perf_counter() - solveStartTime) > failureThresholdSeconds:
             failCount += 1
             print(f"#{currentSudokuNo:>7n} | "\
@@ -184,6 +230,7 @@ def overall_solve(quesString, ansString):
                   f"Failed:{failCount:>2n} ")
             failCases.append(currentSudokuNo)
             break
+        # Run through both algorithms if still unsolved
         else:continue
 
 
