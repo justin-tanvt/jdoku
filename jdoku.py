@@ -257,6 +257,7 @@ failCases = []
 
 file = open(filename)
 csvreader = csv.reader(file)
+header = next(csvreader)      # Kaggle CSV has 'quizzes,solutions' on 1st line
 for lineIndex,line in enumerate(csvreader):
     currentSudokuNo = lineIndex + 1
     (question, answer) = line
@@ -273,10 +274,10 @@ print(f"| Summary |")
 print(f"Solved:{solveCount:<7n}")
 print(f"Failed:{failCount:<2n}")
 print()
-print(f"Average Compute Time: {totalComputeTimeMseconds/solveCount:<.3f}ms")
+print(f"Average Compute Time: {totalComputeTimeMseconds / solveCount:<.3f}ms")
 print(f"Total Compute Time: {totalComputeTimeMinutes:<.2f} minutes")
 print(f"Total Time: {totalTimeMins:<.2f} minutes")
 print()
-print(f"Solve Rate: {100*solveCount/1000000:<.4f}%")
+print(f"Solve Rate: {100 * solveCount / (solveCount + failCount):<.4f}%")
 print()
 print(f"These are the following failed cases:\n{failCases}")
