@@ -144,7 +144,8 @@ def overall_solve(quesString, ansString):
         
     # Populate 9block Possible-Solution-Locations
     for rcmType, rcmNo in rcmTuple:
-        for current9block in master9block[rcmType]:
+        all9blocksOfSameType = master9block[rcmType]
+        for current9block in all9blocksOfSameType:
             cellsIn9block = master9block[rcmType][current9block]["cells"]
             solsIn9block = master9block[rcmType][current9block]["sols"]
             for currentCell in cellsIn9block:
@@ -214,7 +215,7 @@ def overall_solve(quesString, ansString):
             for current9block in master9block[rcmType]:
                 solsIn9block = master9block[rcmType][current9block]["sols"]
                 for currentSol in solsIn9block:
-                    solution_algorithm_2(currentSol,solsIn9block)    
+                    solution_algorithm_2(currentSol, solsIn9block)    
                     
         finalAnswer = ''.join([cell["val"] for cell in master])
         
